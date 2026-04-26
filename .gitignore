@@ -1,0 +1,80 @@
+# compiled output
+/dist
+/node_modules
+/build
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Tests
+/coverage
+/.nyc_output
+/test-results/
+/junit.xml
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/snippets
+
+# Environment variables
+.env
+.env.*
+!.env.example
+!.env.test
+.env.development
+.env.production
+
+# TypeORM
+/migrations/*.js
+/migrations/*.ts
+!migrations/.gitkeep
+
+# Temporary files
+*.swp
+*.swo
+*~
+*.tmp
+*.temp
+.cache/
+
+# Package manager files
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+.pnpm-store/
+
+# Debug
+.debug/
+.debug.log
+
+# System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
