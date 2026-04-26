@@ -1,13 +1,8 @@
 {
   "permissions": {
     "allow": [
-<<<<<<< HEAD
-      "Bash(git *)"
-=======
-      "Bash(python3 *)",
-      "Bash(flutter pub *)",
-      "Bash(flutter analyze *)"
->>>>>>> 69854988d6629a0bd8bf85a30fb26bc4d49156f0
+      "Bash(git *)",
+      "Bash(npm run *)"
     ]
   }
 }

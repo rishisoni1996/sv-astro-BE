@@ -10,6 +10,10 @@ export class OnboardingAnswerRepository {
     private readonly repo: Repository<OnboardingAnswerEntity>,
   ) {}
 
+  findAllByUserId(userId: string): Promise<OnboardingAnswerEntity[]> {
+    return this.repo.find({ where: { userId } });
+  }
+
   async upsert(
     userId: string,
     step: number,

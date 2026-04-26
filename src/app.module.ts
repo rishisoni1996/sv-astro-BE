@@ -13,6 +13,7 @@ import iapConfig from './config/iap.config';
 
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { AiModule } from './ai/ai.module';
+import { AstrologyModule } from './astrology/astrology.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { DreamsModule } from './modules/dreams/dreams.module';
@@ -48,6 +49,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
       inject: [ConfigService],
     }),
     AiModule,
+    AstrologyModule,
     AuthModule,
     UsersModule,
     DreamsModule,

@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { AstrologyService } from '../../astrology/astrology.service';
 import { UserRepository } from './infrastructure/persistence/relational/repositories/user.repository';
 import { BirthChartRepository } from './infrastructure/persistence/relational/repositories/birth-chart.repository';
 import { OnboardingAnswerRepository } from './infrastructure/persistence/relational/repositories/onboarding-answer.repository';
@@ -15,12 +16,18 @@ import { DreamEntity } from '../dreams/infrastructure/persistence/relational/ent
 import { UserSubscriptionEntity } from '../subscriptions/infrastructure/persistence/relational/entities/user-subscription.entity';
 import { SubscriptionStatus } from '../subscriptions/subscriptions.enums';
 
+const ONBOARDING_STEP_BIRTH_DATE = 5;
+const ONBOARDING_STEP_BIRTH_LOCATION = 8;
+
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private readonly userRepo: UserRepository,
     private readonly birthChartRepo: BirthChartRepository,
     private readonly onboardingRepo: OnboardingAnswerRepository,
+    private readonly astrology: AstrologyService,
     @InjectRepository(DreamEntity)
     private readonly dreamRepo: Repository<DreamEntity>,
     @InjectRepository(UserSubscriptionEntity)
@@ -68,6 +75,55 @@ export class UsersService {
     answer: Record<string, unknown>,
   ): Promise<void> {
     await this.onboardingRepo.upsert(userId, step, answer);
+    if (step === ONBOARDING_STEP_BIRTH_DATE || step === ONBOARDING_STEP_BIRTH_LOCATION) {
+      await this.tryAutoUpsertBirthChart(userId);
+    }
+  }
+
+  private async tryAutoUpsertBirthChart(userId: string): Promise<void> {
+    try {
+      const answers = await this.onboardingRepo.findAllByUserId(userId);
+      const byStep = new Map(answers.map((a) => [a.step, a.answerJson]));
+      const dateAns = byStep.get(ONBOARDING_STEP_BIRTH_DATE);
+      const locAns = byStep.get(ONBOARDING_STEP_BIRTH_LOCATION);
+      if (!dateAns || !locAns) return;
+
+      const birthDate = pickString(dateAns, 'birthDate');
+      const birthTime = pickString(dateAns, 'birthTime');
+      const birthLocation = pickString(locAns, 'birthLocation');
+      if (!birthDate || !birthLocation) return;
+
+      const geo = await this.astrology.geocode(birthLocation);
+      const signs = await this.astrology.computeSigns({
+        birthDate,
+        birthTime,
+        latitude: geo?.latitude ?? null,
+        longitude: geo?.longitude ?? null,
+        timezone: geo?.timezone ?? null,
+      });
+
+      // Sun + moon must compute for the row to be useful — skip if either failed.
+      if (!signs.sunSign || !signs.moonSign) {
+        this.logger.warn(`auto birth-chart skipped for user ${userId}: sun/moon compute failed`);
+        return;
+      }
+
+      await this.birthChartRepo.upsert(userId, {
+        sunSign: signs.sunSign,
+        moonSign: signs.moonSign,
+        risingSign: signs.risingSign,
+        birthDate,
+        birthTime: birthTime ?? null,
+        birthLocation,
+        birthLatitude: geo ? geo.latitude.toString() : null,
+        birthLongitude: geo ? geo.longitude.toString() : null,
+        birthTimezone: geo?.timezone ?? null,
+      });
+    } catch (err) {
+      this.logger.warn(
+        `auto birth-chart upsert failed for user ${userId}: ${(err as Error).message}`,
+      );
+    }
   }
 
   async toDomain(user: UserEntity): Promise<UserDomain> {
@@ -96,6 +152,11 @@ export class UsersService {
   private async countDreams(userId: string): Promise<number> {
     return this.dreamRepo.count({ where: { userId, deletedAt: IsNull() } });
   }
+}
+
+function pickString(obj: Record<string, unknown>, key: string): string | null {
+  const v = obj[key];
+  return typeof v === 'string' && v.trim().length > 0 ? v : null;
 }
 
 function buildInitials(name: string): string {

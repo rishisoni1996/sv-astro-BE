@@ -27,8 +27,8 @@ export class BirthChartEntity {
   @Column({ type: 'varchar', length: 20, name: 'moon_sign' })
   moonSign!: string;
 
-  @Column({ type: 'varchar', length: 20, name: 'rising_sign' })
-  risingSign!: string;
+  @Column({ type: 'varchar', length: 20, nullable: true, name: 'rising_sign' })
+  risingSign!: string | null;
 
   @Column({ type: 'date', name: 'birth_date' })
   birthDate!: string;
@@ -38,6 +38,15 @@ export class BirthChartEntity {
 
   @Column({ type: 'varchar', length: 200, nullable: true, name: 'birth_location' })
   birthLocation!: string | null;
+
+  @Column({ type: 'numeric', precision: 9, scale: 6, nullable: true, name: 'birth_latitude' })
+  birthLatitude!: string | null;
+
+  @Column({ type: 'numeric', precision: 9, scale: 6, nullable: true, name: 'birth_longitude' })
+  birthLongitude!: string | null;
+
+  @Column({ type: 'varchar', length: 64, nullable: true, name: 'birth_timezone' })
+  birthTimezone!: string | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
