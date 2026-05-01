@@ -158,11 +158,12 @@ export const TAROT_SEED: TarotCardSeed[] = [
   {
     sortOrder: 13,
     numeral: 'XIII',
-    name: 'Death',
-    keywords: ['ENDINGS', 'TRANSITION', 'TRANSFORMATION'],
+    name: 'Transformation',
+    keywords: ['RENEWAL', 'TRANSITION', 'TRANSFORMATION'],
     whatShows:
-      'Death rides slowly, and nothing is the same after. But destruction here is always a clearing — endings that make space for what was waiting to begin.',
-    appliesToday: "Something is completing. Let it. The grief is real, and so is what's coming.",
+      'Transformation arrives quietly, and nothing is quite the same after. What falls away here is always a clearing — closings that make space for what was waiting to begin.',
+    appliesToday:
+      'A chapter is closing. Let it. The release is real, and so is what is coming next.',
     question: 'What are you holding onto past its time?',
   },
   {

@@ -3,7 +3,7 @@ import { AuthConfig } from './auth-config.type';
 import { DatabaseConfig } from './database-config.type';
 import { GoogleConfig } from './google-config.type';
 import { AppleConfig } from './apple-config.type';
-import { OpenAiConfig } from './openai-config.type';
+import { AiConfig } from './ai-config.type';
 import { IapConfig } from './iap-config.type';
 
 export type AllConfigType = {
@@ -12,6 +12,6 @@ export type AllConfigType = {
   database: DatabaseConfig;
   google: GoogleConfig;
   apple: AppleConfig;
-  openai: OpenAiConfig;
+  ai: AiConfig;
   iap: IapConfig;
 };

@@ -11,16 +11,18 @@ export class AiService {
   private readonly model: string;
 
   constructor(private readonly configService: ConfigService<AllConfigType>) {
-    const apiKey = this.configService.get('openai.apiKey', { infer: true });
-    this.model = this.configService.get('openai.model', { infer: true }) || 'gpt-4o';
-    this.client = apiKey ? new OpenAI({ apiKey }) : null;
+    const apiKey = this.configService.get('ai.apiKey', { infer: true });
+    const baseURL = this.configService.get('ai.baseUrl', { infer: true });
+    this.model = this.configService.get('ai.model', { infer: true }) || 'gemini-2.5-flash';
+    this.client = apiKey ? new OpenAI({ apiKey, baseURL }) : null;
   }
 
   private async json<T>(systemPrompt: string, userPrompt: string): Promise<T | null> {
     if (!this.client) {
-      this.logger.warn('OpenAI API key not configured — returning null.');
+      this.logger.warn('AI API key not configured — returning null.');
       return null;
     }
+    let raw = '';
     try {
       const completion = await this.client.chat.completions.create({
         model: this.model,
@@ -30,10 +32,14 @@ export class AiService {
         ],
         response_format: { type: 'json_object' },
       });
-      const raw = completion.choices[0]?.message?.content ?? '';
+      raw = completion.choices[0]?.message?.content ?? '';
       return JSON.parse(raw) as T;
     } catch (err) {
-      this.logger.error('AI JSON call failed', err as Error);
+      const e = err as Error & { status?: number; response?: { data?: unknown } };
+      this.logger.error(
+        `AI JSON call failed: ${e.message} | status=${e.status ?? 'n/a'} | raw=${raw.slice(0, 500)}`,
+        e.stack,
+      );
       return null;
     }
   }
@@ -50,7 +56,8 @@ export class AiService {
       });
       return completion.choices[0]?.message?.content ?? null;
     } catch (err) {
-      this.logger.error('AI text call failed', err as Error);
+      const e = err as Error & { status?: number };
+      this.logger.error(`AI text call failed: ${e.message} | status=${e.status ?? 'n/a'}`, e.stack);
       return null;
     }
   }

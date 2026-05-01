@@ -8,7 +8,7 @@ import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
 import googleConfig from './config/google.config';
 import appleConfig from './config/apple.config';
-import openaiConfig from './config/openai.config';
+import aiConfig from './config/ai.config';
 import iapConfig from './config/iap.config';
 
 import { TypeOrmConfigService } from './database/typeorm-config.service';
@@ -33,7 +33,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
         databaseConfig,
         googleConfig,
         appleConfig,
-        openaiConfig,
+        aiConfig,
         iapConfig,
       ],
       envFilePath: ['.env'],
