@@ -22,20 +22,13 @@ import { PatternsModule } from './modules/patterns/patterns.module';
 import { GuidanceModule } from './modules/guidance/guidance.module';
 import { ReadingsModule } from './modules/readings/readings.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        appConfig,
-        authConfig,
-        databaseConfig,
-        googleConfig,
-        appleConfig,
-        aiConfig,
-        iapConfig,
-      ],
+      load: [appConfig, authConfig, databaseConfig, googleConfig, appleConfig, aiConfig, iapConfig],
       envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
@@ -58,6 +51,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
     GuidanceModule,
     ReadingsModule,
     SubscriptionsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

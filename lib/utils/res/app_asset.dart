@@ -1,3 +1,0 @@
-class AppAsset {
-  AppAsset._();
-}
